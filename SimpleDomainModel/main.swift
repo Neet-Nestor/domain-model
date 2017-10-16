@@ -27,61 +27,70 @@ open class TestMe {
 //
 public struct Money {
   public var amount : Int
-  public var currency : String
+  public var currency : CurrencyType
     
-    init(amount: Int, currency: String) {
+    public enum CurrencyType {
+        case USD
+        case EUR
+        case CAN
+        case GBP
+    }
+    
+    init(amount: Int, currency: CurrencyType) {
         self.amount = amount
         self.currency = currency
     }
     
-    public func convert(_ to: String) -> Money {
-        let currencies = ["USD", "EUR", "CAN", "GBP"]
-        if (currencies.contains(to)) {
-            var resultAmount: Int = 0
-            switch self.currency {
-            case "USD":
-                switch to {
-                case "EUR":
-                    resultAmount = Int(1.5 * Double(self.amount))
-                case "CAN":
-                    resultAmount = Int(1.25 * Double(self.amount))
-                default: // "GBP"
-                    resultAmount = Int(0.5 * Double(self.amount))
-                }
-            case "EUR":
-                switch to {
-                case "USD":
-                    resultAmount = 2 * self.amount / 3
-                case "CAN":
-                    resultAmount = Int(Double(2 * self.amount / 3) * 1.25)
-                default: // "GBP"
-                    resultAmount = self.amount / 3
-                }
-            case "CAN":
-                switch to {
-                case "USD":
-                    resultAmount = 4 * self.amount / 5
-                case "EUR":
-                    resultAmount = 6 * self.amount / 5
-                default: // "GBP"
-                    resultAmount = 2 * self.amount / 5
-                }
-            default:    // "GBP"
-                switch to {
-                case "EUR":
-                    resultAmount = 3 * self.amount
-                case "CAN":
-                    resultAmount = Int(2.5 * Double(self.amount))
-                default: // "USD"
-                    resultAmount = self.amount * 2
-                }
-                
+    public func convert(_ to: CurrencyType) -> Money {
+        var resultAmount: Int = 0
+        switch self.currency {
+        case .USD:
+            switch to {
+            case .EUR:
+                resultAmount = Int(1.5 * Double(self.amount))
+            case .CAN:
+                resultAmount = Int(1.25 * Double(self.amount))
+            case .GBP:
+                resultAmount = Int(0.5 * Double(self.amount))
+            case .USD:
+                resultAmount = self.amount
             }
-            return Money(amount: resultAmount, currency: to)
-        } else {
-            print("Error! Wrong input currency.")
-            return self
+        case .EUR:
+            switch to {
+            case .USD:
+                resultAmount = 2 * self.amount / 3
+            case .CAN:
+                resultAmount = Int(Double(2 * self.amount / 3) * 1.25)
+            case .GBP:
+                resultAmount = self.amount / 3
+            case .EUR:
+                resultAmount = self.amount
+            }
+        case .CAN:
+            switch to {
+            case .USD:
+                resultAmount = 4 * self.amount / 5
+            case .EUR:
+                resultAmount = 6 * self.amount / 5
+            case .GBP:
+                resultAmount = 2 * self.amount / 5
+            case .CAN:
+                resultAmount = self.amount
+            }
+        case .GBP:
+            switch to {
+            case .EUR:
+                resultAmount = 3 * self.amount
+            case .CAN:
+                resultAmount = Int(2.5 * Double(self.amount))
+            case .USD:
+                resultAmount = self.amount * 2
+            case .GBP:
+                resultAmount = self.amount
+            }
+            
         }
+        return Money(amount: resultAmount, currency: to)
     }
     public func add(_ to: Money) -> Money {
         if (to.currency == self.currency) {
